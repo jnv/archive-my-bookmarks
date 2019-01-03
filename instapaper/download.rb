@@ -3,10 +3,14 @@
 
 require 'instapaper'
 require 'fileutils'
+require 'stringex_lite'
 require_relative 'secrets'
 require_relative 'ndjson'
+require_relative 'colorize'
 
-ARCHIVE_ROOT = 'archive'
+ARCHIVE_ROOT = File.join __dir__, '..', 'bookmarks', 'instapaper'
+BOOKMARKS_LIMIT = 500
+APPEND = true
 
 credentials = {
   consumer_key: CONSUMER_KEY,
@@ -27,8 +31,21 @@ def folder_dir(folder_name)
   path
 end
 
+def load_existing_ids(filename)
+  ids = []
+
+  return ids unless File.exist? filename
+
+  File.readlines(filename).each do |line|
+    parsed = JSON.parse(line)
+    ids.push(parsed['bookmark_id'])
+  end
+  puts "Already have #{ids.count} IDs"
+  ids
+end
+
 def download_bookmarks(client, folder_id, output, text_dir, have = [])
-  response = client.bookmarks(have: have.join(','), folder_id: folder_id)
+  response = client.bookmarks(have: have.join(','), limit: BOOKMARKS_LIMIT, folder_id: folder_id)
   if response.bookmarks.empty?
     puts 'Response empty'
     return
@@ -38,8 +55,8 @@ def download_bookmarks(client, folder_id, output, text_dir, have = [])
     puts " #{bookmark_id} #{bookmark.title}"
     h = bookmark.to_hash
     h[:highlights] = get_highlights(client, bookmark_id)
-    output.write h
     download_text client, h, text_dir
+    output.write h
     have.push bookmark_id
   end
   puts "Have #{have.count} bookmarks"
@@ -48,17 +65,28 @@ end
 
 def download_from_folder(client, folder_id, folder_name)
   filename = File.join ARCHIVE_ROOT, "#{folder_name}.jsonl"
-  ids = []
-  puts "Fetching folder #{folder_name} (#{folder_id}) to #{filename}"
+  puts "Fetching folder #{folder_name} (#{folder_id}) to #{filename}".yellow
   text_dir = folder_dir folder_name
-  output = NdjsonFile.new(filename)
-  download_bookmarks client, folder_id, output, text_dir
+  mode = 'w'
+  mode = 'a' if APPEND
+  has_ids = load_existing_ids(filename)
+  output = NdjsonFile.new(filename, mode)
+  download_bookmarks client, folder_id, output, text_dir, has_ids
 end
 
 def download_text(client, bookmark, dir)
   bookmark_id = bookmark[:bookmark_id]
-  text = client.get_text bookmark_id
-  filename = File.join dir, "#{bookmark_id}.html"
+  errored = false
+  slug = bookmark[:title].to_url(limit: 30, replace_whitespace_with: '_')
+  begin
+    text = client.get_text bookmark_id
+  rescue StandardError => e
+    print ' Error fetching text:'.red
+    puts e
+    puts " #{bookmark[:url]}"
+    errored = true
+  end
+  filename = File.join dir, "#{errored ? 'err-' : ''}#{bookmark_id}-#{slug}.html"
   File.open(filename, 'w') do |file|
     file.write "---\n"
     file.write bookmark.to_json

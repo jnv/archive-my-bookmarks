@@ -33,6 +33,7 @@ GEM
     multi_json (1.13.1)
     public_suffix (3.0.3)
     simple_oauth (0.3.1)
+    stringex (2.8.5)
     thread_safe (0.3.6)
     unf (0.1.4)
       unf_ext
@@ -48,6 +49,7 @@ PLATFORMS
 
 DEPENDENCIES
   instapaper (~> 1.0.0)
+  stringex
 
 BUNDLED WITH
    1.17.3
