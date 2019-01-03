@@ -11,6 +11,7 @@ require_relative 'colorize'
 ARCHIVE_ROOT = File.join __dir__, '..', 'bookmarks', 'instapaper'
 BOOKMARKS_LIMIT = 500
 APPEND = true
+MOVE_TO_FOLDER = false
 
 credentials = {
   consumer_key: CONSUMER_KEY,
@@ -34,6 +35,7 @@ end
 def load_existing_ids(filename)
   ids = []
 
+  return ids unless APPEND
   return ids unless File.exist? filename
 
   File.readlines(filename).each do |line|
@@ -58,6 +60,9 @@ def download_bookmarks(client, folder_id, output, text_dir, have = [])
     download_text client, h, text_dir
     output.write h
     have.push bookmark_id
+    if MOVE_TO_FOLDER
+      client.move_bookmark bookmark_id, MOVE_TO_FOLDER
+    end
   end
   puts "Have #{have.count} bookmarks"
   download_bookmarks client, folder_id, output, text_dir, have
@@ -101,11 +106,16 @@ end
 
 
 FileUtils.mkdir_p ARCHIVE_ROOT
-#['unread', 'archive'].each do |folder|
-#  download_from_folder client, folder, folder
-#end
+['unread', 'archive'].each do |folder|
+  download_from_folder client, folder, folder
+end
+
 folders = client.folders
 File.write File.join(ARCHIVE_ROOT, 'folders.json'), folders.map(&:to_hash).to_json
 folders.each do |folder|
+  if folder.folder_id === MOVE_TO_FOLDER
+    puts "Skipping folder #{folder.slug} (#{folder.folder_id})"
+    next
+  end
   download_from_folder client, folder.folder_id, folder.slug
 end
