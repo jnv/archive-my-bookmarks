@@ -1,8 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.5.2)
-      public_suffix (>= 2.0.2, < 4.0)
+    addressable (2.8.0)
+      public_suffix (>= 2.0.2, < 5.0)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
@@ -31,7 +31,7 @@ GEM
       simple_oauth (~> 0.3)
       virtus (~> 1)
     multi_json (1.13.1)
-    public_suffix (3.0.3)
+    public_suffix (4.0.6)
     simple_oauth (0.3.1)
     stringex (2.8.5)
     thread_safe (0.3.6)
