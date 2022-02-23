@@ -1,0 +1,31 @@
+name = "get-bookmarks"
+version = "1.0.0"
+
+"""
+GetBookmarks usecase
+"""
+usecase GetBookmarks {
+  input {
+    page string
+  }
+  result {
+    nextPage string
+    self string
+    data
+  }
+
+  error {
+    title string
+  }
+}
+
+usecase GetComments {
+  input {
+    page string
+  }
+  result {
+    nextPage string
+    self string
+    data
+  }
+}

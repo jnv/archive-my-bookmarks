@@ -1,0 +1,27 @@
+{
+  "providers": {
+    "reading-am": {
+      "file": "./providers/reading-am.provider.json",
+      "security": [
+        {
+          "id": "token",
+          "apikey": "$READING_AM_TOKEN"
+        }
+      ],
+      "parameters": {
+        "userId": "$READING_AM_USER_ID"
+      }
+    }
+  },
+  "profiles": {
+    "get-bookmarks": {
+      "file": "./grid/get-bookmarks.supr",
+      "priority": ["reading-am"],
+      "providers": {
+        "reading-am": {
+          "file": "./grid/get-bookmarks.reading-am.suma"
+        }
+      }
+    }
+  }
+}

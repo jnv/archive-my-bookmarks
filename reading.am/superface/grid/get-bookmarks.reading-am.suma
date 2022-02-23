@@ -1,0 +1,43 @@
+profile = "get-bookmarks@1.0"
+provider = "reading-am"
+
+"""
+GetBookmarks map
+"""
+map GetBookmarks {
+  userId = parameters.userId
+  limit = 20
+  offset = input.page ? parseInt(input.page) : 0
+  yn = "all"
+
+  path = `users/${userId}/posts?limit=${limit}&offset=${offset}&yn=${yn}`
+  http GET "/api/{path}" {
+    security "token"
+
+    request "application/json" {
+      query {
+        limit = limit,
+        offset = offset,
+        yn = yn,
+      }
+    }
+
+    response 200 {
+      nextPage = `${offset + limit}`
+      set if (!Array.isArray(body)) {
+        nextPage = null
+      }
+      return map result {
+        self = path,
+        nextPage = nextPage,
+        data = body,
+      }
+    }
+
+    response 401 {
+      return map error {
+        title = "Invalid user token"
+      }
+    }
+  }
+}

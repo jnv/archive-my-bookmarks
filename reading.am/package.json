@@ -1,0 +1,24 @@
+{
+  "name": "backup-readingam",
+  "version": "1.0.0",
+  "description": "Backup Reading.am data",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jnv/archive-my-bookmarks.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jnv/archive-my-bookmarks/issues"
+  },
+  "homepage": "https://github.com/jnv/archive-my-bookmarks#readme",
+  "dependencies": {
+    "@superfaceai/one-sdk": "^1.3.0",
+    "dotenv": "^16.0.0"
+  }
+}
