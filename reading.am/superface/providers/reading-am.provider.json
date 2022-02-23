@@ -14,5 +14,6 @@
       "name": "token"
     }
   ],
+  "parameters": [{ "name": "userId" }],
   "defaultService": "default"
 }

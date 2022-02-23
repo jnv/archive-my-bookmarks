@@ -1,5 +1,4 @@
-import { join } from 'node:path'
-
 export default {
-  outputDir: join(__dirname, '..', 'bookmarks', 'reading.am'),
+  // outputDir: join(__dirname, '..', 'bookmarks', 'reading.am'),
+  outputDir: new URL('../bookmarks/reading.am', import.meta.url).pathname,
 }
