@@ -31,11 +31,11 @@ async function saveFile(data, id) {
   })
 }
 
-async function fetchPosts() {
+async function saveResource(useCase) {
   const profile = await sdk.getProfile('get-bookmarks')
 
   const results = paginated((page) =>
-    profile.getUseCase('GetBookmarks').perform({ page })
+    profile.getUseCase(useCase).perform({ page })
   )
 
   for await (const result of results) {
@@ -46,6 +46,8 @@ async function fetchPosts() {
   }
 }
 
-async function fetchComments() {}
+console.error('Fetching bookmarks...')
+await saveResource('GetPosts')
 
-await fetchPosts()
+console.error('Fetching comments...')
+await saveResource('GetComments')
