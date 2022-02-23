@@ -24,7 +24,7 @@ map GetBookmarks {
 
     response 200 {
       nextPage = `${offset + limit}`
-      set if (!Array.isArray(body)) {
+      set if (!Array.isArray(body) || body.length === 0) {
         nextPage = null
       }
       return map result {

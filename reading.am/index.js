@@ -40,7 +40,7 @@ async function fetchPosts() {
 
   for await (const result of results) {
     // console.log(JSON.stringify(result))
-    if (result.data) {
+    if (result.data?.length) {
       await saveFile(result.data, result.self)
     }
   }
