@@ -47,7 +47,7 @@ async function saveResource(useCase) {
 }
 
 console.error('Fetching bookmarks...')
-await saveResource('GetPosts')
+await saveResource('GetBookmarks')
 
 console.error('Fetching comments...')
 await saveResource('GetComments')
